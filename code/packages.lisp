@@ -32,8 +32,10 @@
   (:export #:advance-to-column
            #:line-column
            #:line-length
+           #:measure-char
+           #:measure-string
            #:start-line-p
            #:stream-line-length
-           #:stream-text-length
-           #:text-length))
+           #:stream-measure-char
+           #:stream-measure-string))
 
