@@ -67,7 +67,7 @@
   (declare (ignore stream char))
   1)
 
-(defun measure=char (char &optional stream)
+(defun measure-char (char &optional stream)
   (check-type char character)
   (stream-measure-char (frob-stream stream) char))
 
