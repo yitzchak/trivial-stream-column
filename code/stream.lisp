@@ -61,23 +61,43 @@
            :gray (sb-gray:stream-start-line-p str))
   #-(or cmucl sbcl) (start-line-p/fallback str))
 
-(defgeneric stream-measure-char (stream char))
+(defgeneric stream-style (stream))
 
-(defmethod stream-measure-char (stream char)
-  (declare (ignore stream char))
+(defgeneric (setf stream-style) (new-style stream))
+
+(defgeneric stream-copy-style (stream style &rest overrides &key &allow-other-keys))
+
+(defmethod stream-style (stream)
+  (declare (ignore stream))
+  nil)
+
+(defmethod (setf stream-style) (new-style stream)
+  (declare (ignore stream))
+  new-style)
+
+(defmethod stream-copy-style (stream style &rest overrides &key &allow-other-keys)
+  (declare (ignore stream style overrides))
+  nil)
+
+(defgeneric stream-measure-char (stream char &optional style))
+
+(defmethod stream-measure-char (stream char &optional style)
+  (declare (ignore stream char style))
   1)
 
-(defun measure-char (char &optional stream)
+(defun measure-char (char &optional stream &key style)
   (check-type char character)
-  (stream-measure-char (frob-stream stream) char))
+  (stream-measure-char (frob-stream stream) char style))
 
-(defgeneric stream-measure-string (stream string &optional start end))
+(defgeneric stream-measure-string (stream string &optional start end style))
 
-(defmethod stream-measure-string (stream string &optional start end)
-  (declare (ignore stream))
+(defmethod stream-measure-string (stream string &optional start end style)
+  (declare (ignore stream style))
   (- (or end (length string))
      (or start 0)))
 
-(defun measure-string (string &optional stream &key start end)
-  (stream-measure-string (frob-stream stream) string (or start 0) (or end (length string))))
+(defun measure-string (string &optional stream &key start end style)
+  (stream-measure-string (frob-stream stream) string
+                         (or start 0) (or end (length string))
+                         style))
   

@@ -37,5 +37,7 @@
            #:start-line-p
            #:stream-line-length
            #:stream-measure-char
-           #:stream-measure-string))
+           #:stream-measure-string
+           #:stream-copy-style
+           #:stream-style))
 
