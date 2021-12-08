@@ -63,9 +63,24 @@
 
 (defgeneric stream-style (stream))
 
+(defun style (&optional stream)
+  (stream-style (frob-stream stream)))
+
 (defgeneric (setf stream-style) (new-style stream))
 
+(defun set-style (style &optional stream)
+  (setf (stream-style (frob-stream stream)) style))
+
 (defgeneric stream-copy-style (stream style &rest overrides &key &allow-other-keys))
+
+(defun copy-style (style &optional stream &rest overrides &key &allow-other-keys)
+  (apply #'stream-copy-style (frob-stream stream) style overrides))
+
+(defgeneric stream-scale-column (stream column old-style new-style))
+
+(defun scale-column (column &optional stream &key old-style new-style)
+  (stream-scale-column (frob-stream stream)
+                       column old-style new-style))
 
 (defmethod stream-style (stream)
   (declare (ignore stream))
@@ -78,6 +93,10 @@
 (defmethod stream-copy-style (stream style &rest overrides &key &allow-other-keys)
   (declare (ignore stream style overrides))
   nil)
+
+(defmethod stream-scale-column (stream column old-style new-style)
+  (declare (ignore stream old-style new-style))
+  column)
 
 (defgeneric stream-measure-char (stream char &optional style))
 

@@ -30,14 +30,19 @@
                 #:start-line-p
                 #:stream-line-length)
   (:export #:advance-to-column
+           #:copy-style
            #:line-column
            #:line-length
            #:measure-char
            #:measure-string
+           #:scale-column
+           #:set-style
            #:start-line-p
+           #:stream-copy-style
            #:stream-line-length
            #:stream-measure-char
            #:stream-measure-string
-           #:stream-copy-style
-           #:stream-style))
+           #:stream-scale-column
+           #:stream-style
+           #:style))
 
