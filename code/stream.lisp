@@ -1,5 +1,19 @@
 (in-package #:trivial-stream-column)
 
+(defun fundamental-character-output-stream-p (stream)
+  (or #+(or abcl allegro ccl clasp clisp cmucl ecl genera lispworks mezzano mocl sbcl sicl)
+      (typep stream #+sbcl 'sb-gray:fundamental-character-output-stream
+                    #+allegro 'excl:fundamental-character-output-stream
+                    #+cmucl 'ext:fundamental-character-output-stream
+                    #+(or clisp ecl mocl clasp) 'gray:fundamental-character-output-stream
+                    #+ccl 'ccl:fundamental-character-output-stream
+                    #+lispworks 'stream:fundamental-character-output-stream
+                    #+(or abcl genera) 'gray-streams:fundamental-character-output-stream
+                    #+mezzano 'mezzano.gray:fundamental-character-output-stream
+                    #+sicl 'cyclosis:fundamental-character-output-stream)
+      (find-method #'trivial-gray-streams:stream-line-column nil
+                   (list (class-of stream)) nil)))
+
 (defun frob-stream (stream)
   (cond ((null stream)
          *standard-output*)
@@ -12,17 +26,22 @@
 (defgeneric stream-line-length (stream)
   (:method (stream)
     (declare (ignore stream))
-    #+acl (excl:stream-output-width stream)
-    #-acl nil))
+    #+allegro (excl:stream-output-width stream)))
 
 #-(or mezzano sicl)
-(defun line-column (&optional stream)
-  #+abcl (ext:charpos (frob-stream stream))
-  #+acl (excl:charpos (frob-stream stream))
-  #+(or clasp ecl) (sys:file-column (frob-stream stream))
-  #+cmucl (lisp::charpos (frob-stream stream))
-  #+sbcl (sb-kernel:charpos (frob-stream stream))
-  #-(or abcl acl clasp cmucl ecl sbcl) nil)
+(defun line-column (&optional stream &aux (str (frob-stream stream)))
+  #+abcl (ext:charpos str)
+  #+allegro (excl:charpos str)
+  ;; This is a hack. Both ECL & CLASP use C based dispatch inside
+  ;; sys:file-column that truncates STREAM-LINE-COLUMN to an int.
+  ;; In order To allow stream-line-column to return a real number
+  ;; we try to detect Gray streams and bypass the dispatch.
+  #+(or clasp ecl)
+    (if (fundamental-character-output-stream-p str)
+        (trivial-gray-streams:stream-line-column str)
+        (sys:file-column str))
+  #+cmucl (lisp::charpos str)
+  #+sbcl (sb-kernel:charpos str))
 
 #-(or cmucl mezzano sbcl sicl)
 (defun line-length (&optional stream)
