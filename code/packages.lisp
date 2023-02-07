@@ -1,6 +1,9 @@
 (defpackage #:trivial-stream-column
   (:use #:common-lisp)
   (:documentation "A standard interface to the various stream column functions.")
+  #+clasp
+  (:inport-from #:gray
+                #:stream-line-length)
   #+cmucl
   (:import-from #:ext
                 #:stream-line-length)

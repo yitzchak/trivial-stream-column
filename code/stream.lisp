@@ -11,7 +11,7 @@
                     #+(or abcl genera) 'gray-streams:fundamental-character-output-stream
                     #+mezzano 'mezzano.gray:fundamental-character-output-stream
                     #+sicl 'cyclosis:fundamental-character-output-stream)
-      (find-method #'trivial-gray-streams:stream-line-column nil
+      #+ecl (find-method #'trivial-gray-streams:stream-line-column nil
                    (list (class-of stream)) nil)))
 
 (defun frob-stream (stream)
@@ -22,7 +22,7 @@
         (t
          stream)))
 
-#-(or cmucl mezzano sbcl sicl)
+#-(or clasp cmucl mezzano sbcl sicl)
 (defgeneric stream-line-length (stream)
   (:method (stream)
     (declare (ignore stream))
@@ -32,11 +32,12 @@
 (defun line-column (&optional stream &aux (str (frob-stream stream)))
   #+abcl (ext:charpos str)
   #+allegro (excl:charpos str)
-  ;; This is a hack. Both ECL & CLASP use C based dispatch inside
+  #+clasp (trivial-gray-streams:stream-line-column str)
+  ;; This is a hack. Both ECL uses C based dispatch inside
   ;; sys:file-column that truncates STREAM-LINE-COLUMN to an int.
   ;; In order To allow stream-line-column to return a real number
   ;; we try to detect Gray streams and bypass the dispatch.
-  #+(or clasp ecl)
+  #+ecl
     (if (fundamental-character-output-stream-p str)
         (trivial-gray-streams:stream-line-column str)
         (sys:file-column str))
