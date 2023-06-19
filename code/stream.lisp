@@ -56,10 +56,10 @@
 
 #-(or mezzano sicl)
 (defun advance-to-column (column &optional stream &aux (str (frob-stream stream)))
-  #+cmucl (lisp::stream-api-dispatch (str)
-            :native (advance-to-column/fallback column str)
-            :simple (advance-to-column/fallback column str)
-            :gray (ext:stream-advance-to-column str column))
+  #+cmucl (lisp::stream-dispatch str
+            (advance-to-column/fallback column str)
+            (advance-to-column/fallback column str)
+            (ext:stream-advance-to-column str column))
   #+sbcl (sb-impl::stream-api-dispatch (str)
            :native (advance-to-column/fallback column str)
            :simple (advance-to-column/fallback column str)
@@ -71,10 +71,10 @@
 
 #-(or mezzano sicl)
 (defun start-line-p (&optional stream &aux (str (frob-stream stream)))
-  #+cmucl (lisp::stream-api-dispatch (str)
-            :native (start-line-p/fallback str)
-            :simple (start-line-p/fallback str)
-            :gray (ext:stream-start-line-p str))
+  #+cmucl (lisp::stream-dispatch str
+            (start-line-p/fallback str)
+            (start-line-p/fallback str)
+            (ext:stream-start-line-p str))
   #+sbcl (sb-impl::stream-api-dispatch (str)
            :native (start-line-p/fallback str)
            :simple (start-line-p/fallback str)
