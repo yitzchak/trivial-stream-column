@@ -1,17 +1,18 @@
 (in-package #:trivial-stream-column)
 
 (defun fundamental-character-output-stream-p (stream)
-  (or #+(or abcl allegro ccl clasp clisp cmucl ecl genera lispworks mezzano mocl sbcl sicl)
+  (or #+(or abcl allegro ccl clasp clisp cmucl ecl genera lispworks mezzano mkcl mocl sbcl sicl)
       (typep stream #+sbcl 'sb-gray:fundamental-character-output-stream
                     #+allegro 'excl:fundamental-character-output-stream
                     #+cmucl 'ext:fundamental-character-output-stream
-                    #+(or clisp ecl mocl clasp) 'gray:fundamental-character-output-stream
+                    #+(or clisp ecl mocl clasp mkcl) 'gray:fundamental-character-output-stream
                     #+ccl 'ccl:fundamental-character-output-stream
                     #+lispworks 'stream:fundamental-character-output-stream
                     #+(or abcl genera) 'gray-streams:fundamental-character-output-stream
                     #+mezzano 'mezzano.gray:fundamental-character-output-stream
                     #+sicl 'cyclosis:fundamental-character-output-stream)
-      #+ecl (find-method #'trivial-gray-streams:stream-line-column nil
+      #+(or ecl mkcl)
+      (find-method #'trivial-gray-streams:stream-line-column nil
                    (list (class-of stream)) nil)))
 
 (defun frob-stream (stream)
@@ -37,7 +38,7 @@
   ;; sys:file-column that truncates STREAM-LINE-COLUMN to an int.
   ;; In order To allow stream-line-column to return a real number
   ;; we try to detect Gray streams and bypass the dispatch.
-  #+ecl
+  #+(or ecl mkcl)
     (if (fundamental-character-output-stream-p str)
         (trivial-gray-streams:stream-line-column str)
         (sys:file-column str))
