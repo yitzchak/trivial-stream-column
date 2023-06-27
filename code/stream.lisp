@@ -34,6 +34,7 @@
   #+abcl (ext:charpos str)
   #+allegro (excl:charpos str)
   #+clasp (trivial-gray-streams:stream-line-column str)
+  #+ccl (ccl::column str)
   ;; This is a hack. Both ECL uses C based dispatch inside
   ;; sys:file-column that truncates STREAM-LINE-COLUMN to an int.
   ;; In order To allow stream-line-column to return a real number
